@@ -1,8 +1,10 @@
-package models;
+package models.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import models.Database;
 
 public class MariadbDatabase implements Database {
     private String username;

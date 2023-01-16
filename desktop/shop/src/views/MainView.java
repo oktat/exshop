@@ -1,8 +1,5 @@
 package views;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
@@ -10,9 +7,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
-import models.DataService;
-import models.MariadbDatabase;
+import models.ConfigHandler;
 import models.Product;
+import models.database.DataService;
+import models.database.MariadbDatabase;
 
 public class MainView extends VBox{
     Label productLabel;
@@ -64,10 +62,18 @@ public class MainView extends VBox{
         return productList;
     }
     private void initData() {
+        ConfigHandler conf = new ConfigHandler("Shop.config");
+
+        System.out.printf("%s\n%s\n%s\n",
+        conf.getProperty("database.name"),
+        conf.getProperty("database.username"),
+        conf.getProperty("database.password")        
+        );
+
         dataService = new DataService(new MariadbDatabase(
-            "shop",
-            "shop",
-            "titok"
+            conf.getProperty("database.name"),
+            conf.getProperty("database.username"),
+            conf.getProperty("database.password")
         ));
         // ArrayList<Product> productList = dataService.getProducts();
         // System.out.println(productList.get(0).getName());

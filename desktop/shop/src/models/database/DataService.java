@@ -1,10 +1,13 @@
-package models;
+package models.database;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+import models.Database;
+import models.Product;
 
 public class DataService {
     Database database;
@@ -29,11 +32,11 @@ public class DataService {
         ArrayList<Product> productList = new ArrayList<>();
         while(resultSet.next()) {
             Product product = new Product();
-            product.id = resultSet.getInt("id");
-            product.name = resultSet.getString("name");
-            product.itemNumber = resultSet.getString("itemNumber");
-            product.count = resultSet.getInt("count");
-            product.price = resultSet.getDouble("price");
+            product.setId(resultSet.getInt("id"));
+            product.setName(resultSet.getString("name"));
+            product.setItemNumber(resultSet.getString("itemNumber"));
+            product.setCount(resultSet.getInt("count"));
+            product.setPrice(resultSet.getDouble("price"));
             productList.add(product);
         }
         return productList;        

@@ -11,6 +11,15 @@
         "c:\\Users\\andras\\Library\\javafx\\javafx-sdk-19\\lib\\javafx.media.jar",
         "c:\\Users\\andras\\Library\\javafx\\javafx-sdk-19\\lib\\javafx.swing.jar",
         "c:\\Users\\andras\\Library\\javafx\\javafx-sdk-19\\lib\\javafx.web.jar",
-        "c:\\Users\\andras\\Library\\javafx\\javafx-sdk-19\\lib\\javafx-swt.jar"
+        "c:\\Users\\andras\\Library\\javafx\\javafx-sdk-19\\lib\\javafx-swt.jar",
+        "/home/andras/Library/javafx/javafx-sdk-19/lib/javafx.base.jar",
+        "/home/andras/Library/javafx/javafx-sdk-19/lib/javafx.controls.jar",
+        "/home/andras/Library/javafx/javafx-sdk-19/lib/javafx.fxml.jar",
+        "/home/andras/Library/javafx/javafx-sdk-19/lib/javafx.graphics.jar",
+        "/home/andras/Library/javafx/javafx-sdk-19/lib/javafx.media.jar",
+        "/home/andras/Library/javafx/javafx-sdk-19/lib/javafx.swing.jar",
+        "/home/andras/Library/javafx/javafx-sdk-19/lib/javafx.web.jar",
+        "/home/andras/Library/javafx/javafx-sdk-19/lib/javafx-swt.jar",
+        "/home/andras/Library/mariadb/mariadb-java-client-3.0.3.jar"
     ]
 }
