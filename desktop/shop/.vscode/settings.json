@@ -20,6 +20,7 @@
         "/home/andras/Library/javafx/javafx-sdk-19/lib/javafx.swing.jar",
         "/home/andras/Library/javafx/javafx-sdk-19/lib/javafx.web.jar",
         "/home/andras/Library/javafx/javafx-sdk-19/lib/javafx-swt.jar",
-        "/home/andras/Library/mariadb/mariadb-java-client-3.0.3.jar"
+        "/home/andras/Library/mariadb/mariadb-java-client-3.0.3.jar",
+        "/home/andras/Library/gson/gson-2.9.0.jar"
     ]
 }

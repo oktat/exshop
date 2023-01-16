@@ -6,13 +6,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import models.DataService;
 import models.Database;
 import models.Product;
 
-public class DataService {
+public class DataServiceDb implements DataService {
     Database database;
     Connection con;
-    public DataService(Database database) {
+    public DataServiceDb(Database database) {
         this.database = database;
         con = this.database.connect();
     }
