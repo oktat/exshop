@@ -5,17 +5,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.util.Scanner;
-import java.util.concurrent.CompletableFuture;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,93 +23,79 @@ public class AuthService {
         conf = new ConfigHandler("Shop.properties");
     }
 
-    public String login2(String user, String pass) {
+    public AuthResponse login(String user, String pass) {
+        AuthResponse authResponse = null;
         try {
-            tryLogin2(user, pass);
+            authResponse = tryLogin(user, pass);
         }catch(MalformedURLException e){
             System.err.println("Hiba! Az URL nem megfelelő!");
         }catch (IOException e) {
             System.err.println("Hiba! A HTTP kérés sikertelen!");
         }
-        return "";
+        return authResponse;
     }
-    public String tryLogin2(String user, String pass) 
+    public AuthResponse tryLogin(String user, String pass) 
             throws MalformedURLException, IOException {
-        // String host = "http://[::1]:8000/api/";
         String host = "http://localhost:8000/api/";
         String endpoint = "signin";
         String urlStr = host + endpoint;
-        System.out.println(urlStr);
-
         URL url = new URL(urlStr);
-        HttpURLConnection http = (HttpURLConnection) url.openConnection();
-        
+        HttpURLConnection http = (HttpURLConnection) url.openConnection();        
         
         http.setRequestMethod("POST");
         http.setRequestProperty("Content-Type", "application/json");
         http.setRequestProperty("Accept", "application/json");
         
         http.setDoOutput(true);
-        String jsonInputString = "{ \"name\": \"mari\", \"password\": \"titok\"}";
+        String jsonInputString = "{ \"name\": \"" + 
+        user + "\", \"password\": \"" + pass + "\"}";
+
         byte[] input = jsonInputString.getBytes();
         OutputStream os = http.getOutputStream();
         os.write(input, 0, input.length);
         os.close();
 
-        http.connect();
-
-
         int responseCode = http.getResponseCode();
-        StringBuilder text = new StringBuilder();
+        String text = new String();
+        AuthResponse authResponse = new AuthResponse();
         if(responseCode == 200) {
             InputStream inputStream = http.getInputStream();
-            Reader reader = new   InputStreamReader(inputStream, "UTF-8");
-            Scanner scanner = new Scanner(reader);            
-            while(scanner.hasNextLine()) {
-                text.append(scanner.nextLine());
-            }
-            scanner.close();
+            text = this.convertInputStreamToString(inputStream);
+            authResponse = this.getResponseObject(text);
         }else {
             System.err.println("Hiba! A HTTP lekérdezés sikertelen!");
-        }        
-        System.out.println(text.toString());
-
-        return "";
-    }
-
-    public CompletableFuture<String> loginJson(String user, String pass) {
-        String host = conf.getProperty("api.host");
-        String endpoint = "signin";
-        String url = host + endpoint;
-
+            authResponse.setSuccess(false);
+        }
 
         
+        return authResponse;
+    }
+    public String convertInputStreamToString(InputStream inputStream) {
+        String responseString = null;
+        try {
+            responseString = this.tryConvertInputStreamToString(inputStream);
+        } catch (UnsupportedEncodingException e) {
+            System.err.println("Hiba! A karakterkódolás érvénytelen!");
+        }
+        return responseString;
+    }
+    public String tryConvertInputStreamToString(InputStream inputStream) 
+            throws UnsupportedEncodingException {
+        StringBuilder text = new StringBuilder();
+        Reader reader = new   InputStreamReader(inputStream, "UTF-8");
+        Scanner scanner = new Scanner(reader);
+        while(scanner.hasNextLine()) {
+            text.append(scanner.nextLine());
+        }
+        scanner.close();
+        return text.toString();
+    }
+
+    public AuthResponse getResponseObject(String stringResponse) {        
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting();
         Gson gson = builder.create();
-
-        var authData = new AuthData(user, pass);
-        var bodyJson = gson.toJson(authData);
-
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-        .uri(URI.create(url))
-        .header("Accept", "application/json")
-        .header("Content-Type", "application/json")
-        .POST(BodyPublishers.ofString(bodyJson))
-        .build();
-
-        return client.sendAsync(request, BodyHandlers.ofString())
-        .thenApply(HttpResponse::body);
-    }
-    public AuthResponse login(String user, String pass) {
-        String jsonContent = this.loginJson(user, pass).join();
-        GsonBuilder builder = new GsonBuilder();
-        builder.setPrettyPrinting();
-        Gson gson = builder.create();
- 
-        AuthResponse authResponse = gson.fromJson(jsonContent, AuthResponse.class);
-        
+        AuthResponse authResponse = gson.fromJson(stringResponse, AuthResponse.class);        
         return authResponse;
     }
 }

@@ -17,10 +17,13 @@ public class LoginController {
         String pass = this.loginView.getPassField().getText();
 
         AuthService authService = new AuthService();
-        authService.login2(user, pass);
+        AuthResponse vmi = authService.login(user, pass);
+        if(vmi.getSuccess()) {
+            System.out.println(vmi.getToken());
+        }else {
+            System.out.println("Hiba! Az azonosítás sikertelen!");
+        }
         
-        // AuthResponse vmi = authService.login(user, pass);
-        // System.out.println(vmi.getToken());
         
     }
 }
