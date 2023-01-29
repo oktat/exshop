@@ -1,11 +1,20 @@
 package models.api;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 
 import com.google.gson.Gson;
@@ -19,7 +28,61 @@ public class AuthService {
     public AuthService() {
         conf = new ConfigHandler("Shop.properties");
     }
-    
+
+    public String login2(String user, String pass) {
+        try {
+            tryLogin2(user, pass);
+        }catch(MalformedURLException e){
+            System.err.println("Hiba! Az URL nem megfelelő!");
+        }catch (IOException e) {
+            System.err.println("Hiba! A HTTP kérés sikertelen!");
+        }
+        return "";
+    }
+    public String tryLogin2(String user, String pass) 
+            throws MalformedURLException, IOException {
+        // String host = "http://[::1]:8000/api/";
+        String host = "http://localhost:8000/api/";
+        String endpoint = "signin";
+        String urlStr = host + endpoint;
+        System.out.println(urlStr);
+
+        URL url = new URL(urlStr);
+        HttpURLConnection http = (HttpURLConnection) url.openConnection();
+        
+        
+        http.setRequestMethod("POST");
+        http.setRequestProperty("Content-Type", "application/json");
+        http.setRequestProperty("Accept", "application/json");
+        
+        http.setDoOutput(true);
+        String jsonInputString = "{ \"name\": \"mari\", \"password\": \"titok\"}";
+        byte[] input = jsonInputString.getBytes();
+        OutputStream os = http.getOutputStream();
+        os.write(input, 0, input.length);
+        os.close();
+
+        http.connect();
+
+
+        int responseCode = http.getResponseCode();
+        StringBuilder text = new StringBuilder();
+        if(responseCode == 200) {
+            InputStream inputStream = http.getInputStream();
+            Reader reader = new   InputStreamReader(inputStream, "UTF-8");
+            Scanner scanner = new Scanner(reader);            
+            while(scanner.hasNextLine()) {
+                text.append(scanner.nextLine());
+            }
+            scanner.close();
+        }else {
+            System.err.println("Hiba! A HTTP lekérdezés sikertelen!");
+        }        
+        System.out.println(text.toString());
+
+        return "";
+    }
+
     public CompletableFuture<String> loginJson(String user, String pass) {
         String host = conf.getProperty("api.host");
         String endpoint = "signin";
