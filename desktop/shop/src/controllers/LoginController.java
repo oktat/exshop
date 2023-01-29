@@ -15,9 +15,15 @@ public class LoginController {
         System.out.println("Azonosítás");
         String user = this.loginView.getUserField().getText();
         String pass = this.loginView.getPassField().getText();
+
         AuthService authService = new AuthService();
         AuthResponse vmi = authService.login(user, pass);
-        System.out.println(vmi.getToken());
+        if(vmi.getSuccess()) {
+            System.out.println(vmi.getToken());
+        }else {
+            System.out.println("Hiba! Az azonosítás sikertelen!");
+        }
+        
         
     }
 }
