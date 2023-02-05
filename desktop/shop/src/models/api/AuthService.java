@@ -9,15 +9,17 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import models.ConfigHandler;
+import models.HttpClient;
 
 public class AuthService {
-
+    String host = "http://localhost:8000/api/";
     ConfigHandler conf;
     public AuthService() {
         conf = new ConfigHandler("Shop.properties");
@@ -36,9 +38,8 @@ public class AuthService {
     }
     public AuthResponse tryLogin(String user, String pass) 
             throws MalformedURLException, IOException {
-        String host = "http://localhost:8000/api/";
         String endpoint = "signin";
-        String urlStr = host + endpoint;
+        String urlStr = this.host + endpoint;
         URL url = new URL(urlStr);
         HttpURLConnection http = (HttpURLConnection) url.openConnection();        
         
@@ -66,10 +67,30 @@ public class AuthService {
             System.err.println("Hiba! A HTTP lekérdezés sikertelen!");
             authResponse.setSuccess(false);
         }
-
-        
         return authResponse;
     }
+
+    public void signup(String user, String email, String pass) {
+        String endpoint = "signup";
+        String urlStr = this.host + endpoint;
+
+        User userdata = new User(user, email, pass);
+        GsonBuilder builder = new GsonBuilder();
+        builder.setPrettyPrinting();
+        Gson gson = builder.create();
+        String jsonInputString = gson.toJson(userdata);
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+        headers.put("Accept", "application/json");        
+        
+        HttpClient httpClient = new HttpClient();
+        String res = httpClient.post(urlStr, jsonInputString, headers);
+        int responseCode = httpClient.getResponseCode();
+        System.out.println("V: " + responseCode); //201 kód: created
+        System.out.println(res);        
+    }
+
     public String convertInputStreamToString(InputStream inputStream) {
         String responseString = null;
         try {

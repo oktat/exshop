@@ -1,5 +1,6 @@
 package views;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -10,13 +11,11 @@ public class LoginView extends VBox {
     TextField userField;
     TextField passField;
     Button loginButton;
-    
-    public MainView mainView;
 
-    public LoginView(MainView mainView) {
-        this.mainView = mainView;
+    public LoginView() {
         this.initComponent();
-        this.addComponent();
+        this.addComponent();        
+        this.setPanel();
     }
     private void initComponent() {
         this.loginLabel = new Label("Shop belépés");
@@ -45,5 +44,8 @@ public class LoginView extends VBox {
     public Button getLoginButton() {
         return loginButton;
     }
-    
+    private void setPanel() {
+        this.setPadding(new Insets(10, 10, 10, 10));
+        this.setSpacing(10);
+    }   
 }
